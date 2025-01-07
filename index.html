@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Github-user</title>
+
+    <style>
+        * {
+            margin: 0;
+            box-sizing: border-box;
+
+        }
+
+        .github-user {
+            max-width: 400px;
+            height: 500px;
+          
+         border: 1px solid black;
+            margin: auto;
+            margin-top: 50px;
+            border-radius: 40px;
+            font-family: system-ui, sans-serif;
+            background: url(img/background-image.png) no-repeat center top/cover;
+        }
+
+        form {
+            padding-top: 20px;
+            text-align: center;
+        }
+
+        input {
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid rgb(223, 223, 238);
+        }
+
+        button {
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid rgb(223, 223, 235);
+            font-size: 15px;
+          
+
+        }
+
+        ::placeholder {
+            font-size: 16px;
+            
+        }
+
+        .image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 1px solid;
+            display: block;
+            margin: auto;
+            margin-top: 60px;
+        }
+
+
+        .data {
+            margin-top: 40px;
+            margin-left: 50px;
+        }
+
+        .name {
+            text-align: center;
+            font-size: xx-large;
+        }
+
+        label{font-weight: 600; }
+
+        @media screen and (max-width:460px) {
+            button {
+                padding: 10px 6px;}
+            
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div class="github-user">
+        <form name="user">
+            <label> user-name: <input type="search" name="userId" placeholder="Enter user name" required
+                 ></label>
+            <button type="submit">submit</button>
+
+        </form>
+    </div>
+
+    <script>
+        "use strict";
+
+        document.querySelector(`[name="userId"]`).addEventListener("input", function (e) {
+            console.clear();
+            if (this.value == "") {
+                document.querySelector(".name").innerHTML = ""
+                // div.classList.remove("image")
+                document.querySelector(".image").style.visibility = "hidden";
+                document.querySelector(".data").style.visibility = "hidden";
+            }
+
+        })
+        document.querySelector(`[name="user"]`).addEventListener("submit", function (e) {
+            e.preventDefault();
+            let user_id = this.userId.value;
+
+            document.querySelector('[name="user"] button').setAttribute("disabled", "")
+
+            let div = document.querySelector(".image");
+            let name = document.querySelector(".name");
+            let datalist = document.querySelector(".data");
+            if (!div) {
+                div = document.createElement("div");
+                div.classList.add("image");
+                document.querySelector(".github-user").appendChild(div);
+            }
+
+            if (!name) {
+                name = document.createElement("div");
+                name.classList.add("name");
+                document.querySelector(".github-user").appendChild(name);
+            }
+
+
+
+            if (!datalist) {
+                datalist = document.createElement("div");
+                datalist.classList.add("data");
+                document.querySelector(".github-user").appendChild(datalist);
+
+
+            }
+
+                   
+            const url = `https://api.github.com/users/${user_id}`;
+            fetch(url).then(i => i.json()).then(i => {
+                console.log(i);
+
+                if (i.status == "404") {
+                    document.querySelector(".name").innerHTML = "not available"
+
+                    document.querySelector(".image").style.visibility = "hidden";
+                    document.querySelector(".data").style.visibility = "hidden";
+                    document.querySelector('[name="user"] button').removeAttribute("disabled");
+
+
+                } else {
+
+
+                    document.querySelector('.image').style.background = `url('${i.avatar_url}')no-repeat center top/cover`
+                    document.querySelector(".name").innerHTML = i.name
+
+                    document.querySelector(".data").innerHTML = `
+               <div class="user-name">User-name:<span>${i.login}</span></div>
+                <div class="company">Company:<span>${i.company}</span></div>
+                <div class="location">Location:<span>${i.location}</span></div>
+                <div class="id">Id No:<span>${i.id}</span></div>
+                <div class="blog">Blog:<a href="${i.blog}" target="_blank">${i.blog}</a><span></span></div> `
+
+
+                    if (i.name == null) {
+                        document.querySelector(".name ").innerHTML = " Name is not available"
+                      
+                    }
+                    if (i.company == null) {
+                        document.querySelector(".company span").innerHTML = "N/A"
+                    }
+
+                    if (i.location == null) {
+                        document.querySelector(".location span").innerHTML = "N/A"
+                    }
+
+                    if (i.blog == "") {
+                        document.querySelector(".blog span").innerHTML = "N/A"
+                    }
+
+                  
+
+                    document.querySelector('[name="user"] button').removeAttribute("disabled")
+
+                    // div.classList.add("image")
+                    document.querySelector(".image").style.visibility = "visible";
+                    document.querySelector(".data").style.visibility = "visible";
+                }
+            })
+                .catch(e => console.log(e));
+        })
+    </script>
+
+
+</body>
+
+</html>
+
